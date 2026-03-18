@@ -18,32 +18,25 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public ResponseEntity<?> createStudent(@RequestBody StudentEntity student) {
-        try{
-            return ResponseEntity.status(201).body(studentService.setStudent(student));
-        }catch(Exception e){
-            return ResponseEntity.status(500).body(e.getMessage());
+    public ResponseEntity<String> createStudent(@RequestBody StudentEntity student) {
+        List<String> studentsNames = new ArrayList<>();
+        for(StudentEntity studentEntity : studentService.setStudent(student)){
+            studentsNames.add(studentEntity.getFirstName() + " " + studentEntity.getLastName());
         }
 
+        return ResponseEntity.ok(studentsNames.toString());
     }
 
     @GetMapping("/students")
     public ResponseEntity<?> getStudents(@RequestHeader(required = true) String Accept) {
-        try{
-            if(Accept == null || Accept.isEmpty()){
-                return ResponseEntity.status(400).body("Accept header is null");
-            }
-            if(!MediaType.TEXT_PLAIN_VALUE.equals(Accept) &&  !MediaType.APPLICATION_JSON_VALUE.equals(Accept)){
-                return ResponseEntity.status(501).body("Format non supporte");
-            }
-            if (MediaType.TEXT_PLAIN_VALUE.equals(Accept)) {
-                String studentsString = studentService.getStudents().toString();
-                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(studentsString);
-            }
-            return ResponseEntity.ok(studentService.getStudents());
-        }catch(Exception e){
-            return ResponseEntity.status(500).body(e.getMessage());
+        if(!MediaType.TEXT_PLAIN_VALUE.equals(Accept)){
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Format non supporte");
+        }
+        List<String> studentsNames = new ArrayList<>();
+        for(StudentEntity studentEntity : studentService.getStudents()){
+            studentsNames.add(studentEntity.getFirstName() + " " + studentEntity.getLastName());
         }
 
+        return ResponseEntity.ok(studentsNames.toString());
     }
 }
