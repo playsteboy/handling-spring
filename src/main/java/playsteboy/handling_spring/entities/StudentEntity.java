@@ -6,6 +6,8 @@ public class StudentEntity {
     private String lastName;
     private int age;
 
+    public StudentEntity() {
+    }
     public StudentEntity(String reference, String firstName, String lastName, int age) {
         this.reference = reference;
         this.firstName = firstName;
